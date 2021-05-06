@@ -1,0 +1,13 @@
+---
+- :name: Bulbasaur
+  :number: '001'
+  :img: 001-Bulbasaur.png
+- :name: Ivysaur
+  :number: '002'
+  :img: 002-Ivysaur.png
+- :name: Venusaur
+  :number: '003'
+  :img: 003-Venusaur.png
+- :name: Charmander
+  :number: '004'
+  :img: 004-Charmander.png

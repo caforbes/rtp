@@ -1,0 +1,24 @@
+<% if session[:rating] %>
+  <p>Phew! You did it! Why don't you sit back with a tall glass of water?</p>
+<% end %>
+
+<!--everyone sees-->
+<h1>Overall ratings</h1>
+
+<p>The BEST pokemon are:</p>
+
+<p>The WORST pokemon are:</p>
+
+<p>One day this page may have graphs...</p>
+
+
+<!--if you rated some pokemon-->
+<% if session[:rating] %>
+  <h1>Your ratings</h1>
+
+  <p>Your top-rated pokemon are:</p>
+
+  <p>The pokemon to which you gave the most atypical ratings were:</p>
+
+  <p>Thanks for rating! Feel free to come rate again after leveling up a bit.</p>
+<% end %>

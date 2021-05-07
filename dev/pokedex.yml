@@ -1,0 +1,19 @@
+---
+- :name: Bulbasaur
+  :number: '001'
+  :img: 001-Bulbasaur.png
+- :name: Charmander
+  :number: '004'
+  :img: 004-Charmander.png
+- :name: Squirtle
+  :number: '007'
+  :img: 007-Squirtle.png
+- :name: Dratini
+  :number: '147'
+  :img: 147-Dratini.png
+- :name: Dragonair
+  :number: '148'
+  :img: 148-Dragonair.png
+- :name: Dragonite
+  :number: '149'
+  :img: 149-Dragonite.png

@@ -1,8 +1,10 @@
 <h1>Rate That Pokemon!</h1>
 
+<% if !session[:rating] %>
+  <p>Welcome, trainer! Today, your quest is to rate those Pokemon!</p>
+  <p><a href='/rate'>Rate 'em all!</a></p>
+<% else %>
+  <p>Welcome, trainer! You've already rated those Pokemon!</p>
+<% end %>
 
-<p>Welcome, trainer! Today, your quest is to rate those Pokemon!</p>
-
-<p><a href='/rate'>Rate 'em all!</a></p>
-
-<p><a href="/results">View Ratings</a></p>
+<p><a href="/results">View Ratings Leaderboard</a></p>

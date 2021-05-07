@@ -11,6 +11,8 @@ end
 def pokedex_path
   if ENV["RACK_ENV"] == "test"
     File.expand_path("../test", __FILE__)
+  elsif settings.development?
+    File.expand_path("../dev", __FILE__)
   else
     File.expand_path("..", __FILE__)
   end
@@ -44,11 +46,14 @@ post '/rate' do
     if params[name]
       session[:rating][name] = params[name].to_i
     else
-      session[:rating][name] = nil
+      status 422
+      session[:message] = "You've gotta rate ALL the pokemon! No skipping!"
+      break
     end
   end
 
-  redirect '/results'
+  redirect '/results' unless session[:message]
+  erb :rate
 end
 
 get '/results' do

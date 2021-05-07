@@ -30,6 +30,10 @@
       </marquee>
     </div>
 
+    <% if session[:message] %>
+      <div class="message"><%= session.delete(:message) %></div>
+    <% end %>
+
     <%= yield %>
 
   </body>

@@ -26,9 +26,6 @@ class CMSTest < Minitest::Test
 
     assert_equal 200, last_response.status
     assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
-    assert_includes last_response.body, "Bulbasaur"
-    assert_includes last_response.body, "Ivysaur"
-    assert_includes last_response.body, "Venusaur"
     assert_includes last_response.body, '<input type="submit"'
   end
 

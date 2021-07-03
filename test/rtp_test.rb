@@ -34,51 +34,51 @@ class CMSTest < Minitest::Test
     assert_equal 200, last_response.status
   end
 
-  def test_rate_success
-    ratings = { "Bulbasaur" => '5', "Ivysaur" => '4', "Venusaur" => '3' }
+  # def test_rate_success
+  #   ratings = { "Bulbasaur" => '5', "Ivysaur" => '4', "Venusaur" => '3' }
 
-    post '/rate', ratings
-    assert_equal 302, last_response.status
+  #   post '/rate', ratings
+  #   assert_equal 302, last_response.status
 
-    ratings_num = ratings.map { |name, val| [name, val.to_i] }.to_h
-    assert_equal last_request.session[:rating], ratings_num
-  end
+  #   ratings_num = ratings.map { |name, val| [name, val.to_i] }.to_h
+  #   assert_equal last_request.session[:rating], ratings_num
+  # end
 
-  def test_rate_incomplete
-    ratings = { "Bulbasaur" => '5' }
+  # def test_rate_incomplete
+  #   ratings = { "Bulbasaur" => '5' }
 
-    post '/rate', ratings
-    assert_equal 422, last_response.status
-    assert_includes last_response.body, "No skipping!"
-  end
+  #   post '/rate', ratings
+  #   assert_equal 422, last_response.status
+  #   assert_includes last_response.body, "No skipping!"
+  # end
 
-  def test_index_already_rated
-    ratings = { "Bulbasaur" => '5', "Ivysaur" => '4', "Venusaur" => '3' }
-    post '/rate', ratings
+  # def test_index_already_rated
+  #   ratings = { "Bulbasaur" => '5', "Ivysaur" => '4', "Venusaur" => '3' }
+  #   post '/rate', ratings
 
-    get '/'
+  #   get '/'
 
-    assert_equal 200, last_response.status
-    refute_includes last_response.body, "href='/rate'"
-  end
+  #   assert_equal 200, last_response.status
+  #   refute_includes last_response.body, "href='/rate'"
+  # end
 
-  def test_results_new
-    get '/results'
+  # def test_results_new
+  #   get '/results'
 
-    assert_equal 200, last_response.status
-    assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
-    assert_includes last_response.body, "The BEST pokemon are"
-  end
+  #   assert_equal 200, last_response.status
+  #   assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
+  #   assert_includes last_response.body, "The BEST pokemon are"
+  # end
 
-  def test_results_already_rated
-    ratings = { "Bulbasaur" => '5', "Ivysaur" => '4', "Venusaur" => '3' }
-    post '/rate', ratings
+  # def test_results_already_rated
+  #   ratings = { "Bulbasaur" => '5', "Ivysaur" => '4', "Venusaur" => '3' }
+  #   post '/rate', ratings
 
-    get '/results'
+  #   get '/results'
 
-    assert_equal 200, last_response.status
-    assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
-    assert_includes last_response.body, "Your top-rated pokemon are"
-    assert_includes last_response.body, "The BEST pokemon are"
-  end
+  #   assert_equal 200, last_response.status
+  #   assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
+  #   assert_includes last_response.body, "Your top-rated pokemon are"
+  #   assert_includes last_response.body, "The BEST pokemon are"
+  # end
 end

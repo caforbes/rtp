@@ -1,11 +1,11 @@
 <h1>Gotta Rate 'em All!</h1>
 
 <form action='/rate' method='post'>
-  <% each_pokemon do |name, num, pic| %>
+  <% @pokedex.each do |name, num, pic| %>
     <div class='pokemon'>
       <h2><%= num %>: <%= name %></h2>
 
-      <div class='left'><img src="<%= pic%>"></div>
+      <div class='left'><img src="<%= poke_image(pic)%>"></div>
       <div class='right'>
         <input type="radio" id="<%= name %>-5" name="<%= name %>" value="5", required>
         <label for="<%= name %>-5">A</label>

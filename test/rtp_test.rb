@@ -5,7 +5,7 @@ require "rack/test"
 
 require_relative "../rtp"
 
-class CMSTest < Minitest::Test
+class RTPTest < Minitest::Test
   include Rack::Test::Methods
 
   def app

@@ -1,0 +1,23 @@
+<% if session[:ratings] %>
+  <h1>Your ratings</h1>
+
+  <% if @client_top_pokemon.length < 5 %>
+    <p>Five of your highest-rated pokemon are:</p>
+    <% top_pokemon = @client_top_pokemon.sample(5) %>
+  <% else %>
+    <p>Your highest-rated pokemon are:</p>
+    <% top_pokemon = @client_top_pokemon %>
+  <% end %>
+
+  <form action='/submit' method='post'>
+  <div>
+    <% @client_top_pokemon.each do |pokemon| %>
+      <img src="<%= poke_img(pokemon[:img]) %>">
+    <% end %>
+  </div>
+
+  <p>A captcha will live here so only PokeRating Masters may continue.</p>
+
+  <input type="submit" value="Submit and view all ratings">
+
+<% end %>

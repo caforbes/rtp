@@ -12,10 +12,14 @@ class DatabaseStorage
     @logger = logger
   end
 
+  def disconnect
+    @db.close
+  end
+
   def load_all_pokemon
     sql = "SELECT * FROM pokemon ORDER BY id ;"
     result = query(sql)
-    result.map{ |tuple| parse_pokemon_to_hash(tuple) }
+    result.map{ |row| parse_pokemon_to_hash(row) }
   end
 
   def load_one_pokemon(id)
@@ -27,9 +31,9 @@ class DatabaseStorage
 
   def load_pokemon_from_list(id_list)
     sql = "SELECT * FROM pokemon WHERE id IN $1 ;"
-    result = query(sql, id)
+    result = query(sql, id_list)
 
-    result.map{ |tuple| parse_pokemon_to_hash(tuple) }
+    result.map{ |row| parse_pokemon_to_hash(row) }
   end
 
   private
@@ -39,9 +43,9 @@ class DatabaseStorage
     @db.exec_params(sql, args)
   end
 
-  def parse_pokemon_to_hash(tuple)
-    { number: tuple["id"],
-      name: tuple["name"],
-      img: tuple["imgname"] }
+  def parse_pokemon_to_hash(row)
+    { number: row["id"],
+      name: row["name"],
+      img: row["imgname"] }
   end
 end

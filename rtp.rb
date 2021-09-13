@@ -41,6 +41,10 @@ before do
   @ratings = SessionStorage.new(session, @db)
 end
 
+after do
+  @db.disconnect
+end
+
 # Homepage
 get '/' do
   erb :index
@@ -50,30 +54,39 @@ end
 get '/rate' do
   redirect '/results' if @ratings.full?
 
-  @pokedex = @db.load_all_pokemon()
-  @current_pokemon = next_unrated_pokemon(@pokedex, @ratings)
+  @current_pokemon = @db.load_one_pokemon(@ratings.next_unrated_pokemon_id)
 
   erb :rate
 end
 
 # Submit a rating value for one pokemon and store in session
 post '/rate/:pokemon_id' do
-  @ratings[params[:pokemon_id]] = params[:rating].to_i
+  @ratings.rate(params[:pokemon_id], params[:rating].to_i)
 
   redirect '/rate' unless @ratings.full?
+  redirect '/submit'
+end
 
-  # submit to db
-  # session[:submitted] = "true"
+# Display interesting stored ratings from session, solic
+get '/submit' do
+  redirect '/rate' unless @ratings.full?
+
+  top_ids = @ratings.top_rated_pokemon_ids
+  @client_top_pokemon = @db.load_pokemon_from_list(top_ids)
+  erb :submit
+end
+
+# Submit all rating values/comments for all pokemon and store in db
+post '/submit' do
+  # update
+
+  @db.add_client_ratings(@ratings.to_db)
+  session[:submitted] = "true"
+
   redirect '/results'
 end
 
-# Display interesting stored ratings from database / session
+# Display interesting stored ratings from database
 get '/results' do
-  @pokedex = @db.load_all_pokemon()
-
-  top_five_ids = @ratings.sample_top_five
-  top_five = @pokedex.select { |pokemon| top_five_ids.include?(pokemon["id"]) }
-
-  @ratings.clear_all
   erb :results
 end

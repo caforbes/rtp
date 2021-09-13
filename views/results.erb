@@ -1,4 +1,4 @@
-<% if session[:rating] %>
+<% if session[:ratings] %>
   <p>Phew! You did it! Why don't you sit back with a tall glass of water?</p>
 <% end %>
 
@@ -13,14 +13,10 @@
 
 
 <!--if you rated some pokemon-->
-<% if session[:rating] %>
-  <h1>Your ratings</h1>
-
-  <p>Your top-rated pokemon are:</p>
-
+<% if session[:ratings] %>
   <p>The pokemon to which you gave the most atypical ratings were:</p>
 
   <p>Thanks for rating! Feel free to come rate again after leveling up a bit.</p>
 <% end %>
 
-<% session.delete(:rating) %>
+<% session.delete(:ratings) %>

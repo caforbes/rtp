@@ -1,4 +1,4 @@
-<% if session[:ratings] %>
+<% if session[:submitted] %>
   <p>Phew! You did it! Why don't you sit back with a tall glass of water?</p>
 <% end %>
 
@@ -7,9 +7,7 @@
 
 <p>The BEST pokemon are:</p>
 
-<p>The WORST pokemon are:</p>
-
-<p>One day this page may have graphs...</p>
+<p>FORTHCOMING. One day this page may have graphs...</p>
 
 
 <!--if you rated some pokemon-->
@@ -20,3 +18,4 @@
 <% end %>
 
 <% session.delete(:ratings) %>
+<% session.delete(:submitted) %>

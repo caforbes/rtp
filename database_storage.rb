@@ -33,6 +33,16 @@ class DatabaseStorage
     # probe the result object to return a boolean based on success?
   end
 
+  def load_all_ratings
+    # -- display all pokemon ids, names, img, alongside their no. of ratings of each value
+    # -- id  | name     | imgname       | ratings_count | avg_rating | cum_rating | ...
+    # -- 015 | Beedrill | 015-Bee...png |             2 |        1.5 |          4 | ...
+
+    # SELECT * FROM pokemon AS p
+    #   INNER JOIN ratings AS r ON p.id = r.pokemon_id
+    #   GROUP BY p.id ;
+  end
+
   private
 
   def query(sql, *args)

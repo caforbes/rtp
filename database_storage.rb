@@ -29,13 +29,6 @@ class DatabaseStorage
     parse_pokemon_to_hash(result.first)
   end
 
-  def load_pokemon_from_list(id_list)
-    sql = "SELECT * FROM pokemon WHERE id IN $1 ;"
-    result = query(sql, id_list)
-
-    result.map{ |row| parse_pokemon_to_hash(row) }
-  end
-
   private
 
   def query(sql, *args)

@@ -30,6 +30,7 @@ def next_unrated_pokemon(available_pokemon, ratings)
   available_pokemon.reject { |pokemon| ratings[pokemon[:number]] }.first
 end
 
+# TODO: dynamically generate image link from id/name, don't store in db
 helpers do
   def poke_image(img_link)
     "/pokedex/#{img_link}"
@@ -67,12 +68,17 @@ post '/rate/:pokemon_id' do
   redirect '/submit'
 end
 
-# Display interesting stored ratings from session, solic
+# Display interesting stored ratings from session, confirm submission to db
 get '/submit' do
   redirect '/rate' unless @ratings.full?
 
   top_ids = @ratings.top_rated_pokemon_ids
-  @client_top_pokemon = @db.load_pokemon_from_list(top_ids)
+
+  @client_top_pokemon = @db.load_all_pokemon()
+  @client_top_pokemon.select! do |pokemon|
+    top_ids.include?(pokemon[:number])
+  end
+
   erb :submit
 end
 

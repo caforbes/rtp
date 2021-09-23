@@ -1,7 +1,14 @@
 class SessionStorage
+  include Enumerable
+
   def initialize(session, connection)
     @session = session
     @session[:ratings] ||= new_empty_ratings(connection.load_all_pokemon())
+  end
+
+  def each
+    @session[:ratings].each { |id, rating_info| yield(id, rating_info) }
+    @session[:ratings]
   end
 
   # view the rating value of the pokemon at the input id

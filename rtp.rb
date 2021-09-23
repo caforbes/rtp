@@ -84,9 +84,11 @@ end
 
 # Submit all rating values/comments for all pokemon and store in db
 post '/submit' do
-  # update
+  redirect '/rate' unless @ratings.full?
 
-  @db.add_client_ratings(@ratings.to_db)
+  @ratings.each do |id, values|
+    @db.add_client_rating(id, values[:rating])
+  end
   session[:submitted] = "true"
 
   redirect '/results'
@@ -94,5 +96,7 @@ end
 
 # Display interesting stored ratings from database
 get '/results' do
+  @ratings_aggregate = @db.load_all_ratings()
+
   erb :results
 end

@@ -1,8 +1,6 @@
 require 'pg'
 
 class DatabaseStorage
-  include Enumerable
-
   def initialize(logger)
     @db = if Sinatra::Base.production?
             PG.connect(ENV['DATABASE_URL'])
@@ -27,6 +25,12 @@ class DatabaseStorage
     result = query(sql, id)
 
     parse_pokemon_to_hash(result.first)
+  end
+
+  def add_client_rating(id, rating)
+    sql = "INSERT INTO ratings (pokemon_id, rating) VALUES ($1, $2);"
+    result = query(sql, id, rating)
+    # probe the result object to return a boolean based on success?
   end
 
   private

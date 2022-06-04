@@ -12,16 +12,23 @@ Rake::TestTask.new do |t|
   t.test_files = FileList['test/*_test.rb']
 end
 
-desc 'Remake db from schema, no data'
-task :refreshdb do
+desc 'Make empty db from schema'
+task :makedb => :dropdb do
   main = File.expand_path("..", __FILE__)
-  sh 'dropdb rtp'
   sh 'createdb rtp'
   sh "psql -d rtp < #{File.join(main, 'schema.sql')}"
 end
 
-desc 'Remake db with all pokemon'
-task :cleandb_all => :refreshdb do
+desc 'Drop db if it exists'
+task :dropdb do
+  # check connection first
+  PG.connect(dbname: 'rtp').close
+  sh 'dropdb rtp'
+rescue PG::ConnectionBad => e
+end
+
+desc 'Setup fresh db with all pokemon'
+task :setupdb => :makedb do
   main = File.expand_path("..", __FILE__)
   pokedex = YAML.load_file(File.join(main, 'pokedex.yml'))
   pokedex.map! { |pokemon| [pokemon[:number], pokemon[:name], pokemon[:img]] }
@@ -35,12 +42,12 @@ task :cleandb_all => :refreshdb do
   puts "#{pokedex.size} pokemon written to db."
 end
 
-desc 'Make new db with 5 random pokemon'
-task :cleandb_five => :refreshdb do
+desc 'Setup fresh db with 6 random pokemon'
+task :setupdb_sample => :makedb do
   main = File.expand_path("..", __FILE__)
   pokedex = YAML.load_file(File.join(main, 'pokedex.yml'))
   pokedex.map! { |pokemon| [pokemon[:number], pokemon[:name], pokemon[:img]] }
-  pokedex = pokedex.sample(5)
+  pokedex = pokedex.sample(6)
 
   db = PG.connect(dbname: 'rtp')
   sql = "INSERT INTO pokemon (id, name, imgname) VALUES ($1, $2, $3);"

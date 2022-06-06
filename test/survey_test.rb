@@ -11,23 +11,29 @@ SAMPLE_POKEMON = YAML.load_file(File.join(HERE, 'pokedex.yml'))
 class SurveyTest < Minitest::Test
   def setup
     @survey = Survey.new(SAMPLE_POKEMON)
-    @pokemon_ids = SAMPLE_POKEMON.map { |pokemon| { number: pokemon[:number] } }
+    @pokemon_ids = SAMPLE_POKEMON.map { |pokemon| pokemon[:number] }
   end
 
-  def test_rate_with_int
-    @survey.rate('001', 1)
-    assert_includes @survey.pokemon, { number: '001', rating: 1 }
-  end
+  def test_rate_as_int
+    @survey['001'] = 1
+    assert_equal @survey['001'], 1
 
-  def test_rate_with_string
-    @survey.rate('001', '1')
-    assert_includes @survey.pokemon, { number: '001', rating: 1 }
+    @survey['002'] = '1'
+    assert_equal @survey['002'], 1
   end
 
   def test_rate_error
-    assert_raises(TypeError) do
-      @survey.rate('001', 'fruit')
+    assert_raises(KeyError) do
+      @survey['fruit'] = 1
     end
+    assert_raises(TypeError) do
+      @survey['001'] = 'fruit'
+    end
+  end
+
+  def test_ratings_export
+    @survey['001'] = 1
+    assert_includes @survey.ratings, ['001', 1]
   end
 
   # def test_comment
@@ -35,59 +41,43 @@ class SurveyTest < Minitest::Test
   #   assert_includes @survey.pokemon, { number: '001', comment: 'test' }
   # end
 
-  def test_next_fresh
-    assert_equal @survey.next_unrated_id, @pokemon_ids[0][:number]
-  end
-  
-  def test_next_after_rating
+  def test_next_id
+    assert_equal @survey.next_unrated_id, @pokemon_ids[0]
+    
     rate_one
-    assert_equal @survey.next_unrated_id, @pokemon_ids[1][:number]
-  end
-
-  def test_next_after_all_rated
+    assert_equal @survey.next_unrated_id, @pokemon_ids[1]
+    
     rate_all
     assert_nil @survey.next_unrated_id
   end
 
-  def test_unrated_fresh
+  def test_unrated
     assert_equal @survey.unrated, @pokemon_ids
-  end
-
-  def test_unrated_after_rating
+  
     rate_one
     @pokemon_ids.shift
     assert_equal @survey.unrated, @pokemon_ids
-  end
-
-  def test_unrated_after_all_rated
+    
     rate_all
     assert_empty @survey.unrated
   end
 
-  def test_complete_fresh
+  def test_complete
     assert !@survey.complete?
-  end
-
-  def test_complete_after_rating
+  
     rate_one
     assert !@survey.complete?
-  end
-
-  def test_complete_after_all_rated
+  
     rate_all
     assert @survey.complete?
   end
 
-  def test_remaining_fresh
+  def test_remaining
     assert_equal @survey.remaining_size, @pokemon_ids.size
-  end
-
-  def test_remaining_after_rating
+  
     rate_one
     assert_equal @survey.remaining_size, @pokemon_ids.size - 1
-  end
-
-  def test_remaining_after_all_rated
+  
     rate_all
     assert_equal @survey.remaining_size, 0
   end
@@ -95,11 +85,11 @@ class SurveyTest < Minitest::Test
   private
 
   def rate_one
-    @survey.rate('001', 1)
+    @survey['001'] = 1
   end
 
   def rate_all
-    @pokemon_ids.each { |pokemon| @survey.rate(pokemon[:number], 1) }
+    @pokemon_ids.each { |id| @survey[id] = 1 }
   end
 end
 

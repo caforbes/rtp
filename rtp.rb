@@ -3,8 +3,8 @@ require 'sinatra/reloader'
 require 'tilt/erubis'
 require 'yaml'
 
-require_relative 'database_storage.rb'
-require_relative 'session_storage.rb'
+require_relative 'database_storage'
+require_relative 'session_storage'
 
 configure do
   enable :sessions
@@ -61,42 +61,33 @@ get '/rate' do
 end
 
 # Submit a rating value for one pokemon and store in session
+# If it's the last pokemon, submit all ratings to db
 post '/rate/:pokemon_id' do
   @ratings.rate(params[:pokemon_id], params[:rating].to_i)
 
-  redirect '/rate' unless @ratings.full?
-  redirect '/submit'
-end
+  if @ratings.full?
+    @ratings.each do |id, values|
+      @db.add_client_rating(id, values[:rating])
+    end
 
-# Display interesting stored ratings from session, confirm submission to db
-get '/submit' do
-  redirect '/rate' unless @ratings.full?
-
-  top_ids = @ratings.top_rated_pokemon_ids
-
-  @client_top_pokemon = @db.load_all_pokemon()
-  @client_top_pokemon.select! do |pokemon|
-    top_ids.include?(pokemon[:number])
+    session[:submitted] = 'true'
+    redirect '/results'
+  else
+    redirect '/rate'
   end
-
-  erb :submit
-end
-
-# Submit all rating values/comments for all pokemon and store in db
-post '/submit' do
-  redirect '/rate' unless @ratings.full?
-
-  @ratings.each do |id, values|
-    @db.add_client_rating(id, values[:rating])
-  end
-  session[:submitted] = "true"
-
-  redirect '/results'
 end
 
 # Display interesting stored ratings from database
 get '/results' do
-  @ratings_aggregate = @db.load_all_ratings()
+  
+  top_ids = @ratings.top_rated_pokemon_ids
+
+  @client_top_pokemon = @db.load_all_pokemon
+  @client_top_pokemon.select! do |pokemon|
+    top_ids.include?(pokemon[:number])
+  end
+
+  @ratings_aggregate = @db.load_all_ratings
 
   erb :results
 end

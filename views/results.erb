@@ -12,7 +12,24 @@
 
 <!--if you rated some pokemon-->
 <% if session[:ratings] %>
-  <p>The pokemon to which you gave the most atypical ratings were:</p>
+  <h1>Your ratings</h1>
+
+  <% if @client_top_pokemon.length > 5 %>
+    <p>Five of your highest-rated pokemon are:</p>
+    <% top_pokemon = @client_top_pokemon.sample(5) %>
+  <% else %>
+    <p>Your highest-rated pokemon are:</p>
+    <% top_pokemon = @client_top_pokemon %>
+  <% end %>
+
+  <form action='/submit' method='post'>
+  <div>
+    <% @client_top_pokemon.each do |pokemon| %>
+      <img src="<%= poke_image(pokemon[:img]) %>">
+    <% end %>
+  </div>
+
+  <p>The pokemon to which you gave the most atypical ratings were: ...</p>
 
   <p>Thanks for rating! Feel free to come rate again after leveling up a bit.</p>
 <% end %>

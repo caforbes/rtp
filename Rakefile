@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
+require 'pg'
 require 'rake'
 require 'rake/testtask'
-require 'yaml'
-require 'pg'
 require 'rubocop/rake_task'
+require 'yaml'
 
 desc 'Run the main task (tests, lint)'
-task default: [:test, :rubocop]
+task default: %i[test rubocop]
 
 desc 'Run tests'
 Rake::TestTask.new do |t|

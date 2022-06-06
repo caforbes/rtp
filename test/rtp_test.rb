@@ -64,13 +64,13 @@ class RTPTest < Minitest::Test
   #   refute_includes last_response.body, "href='/rate'"
   # end
 
-  # def test_results_new
-  #   get '/results'
+  def test_results_new
+    get '/results'
 
-  #   assert_equal 200, last_response.status
-  #   assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
-  #   assert_includes last_response.body, "The BEST pokemon are"
-  # end
+    assert_equal 200, last_response.status
+    assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
+    assert_includes last_response.body, 'The BEST pokemon are'
+  end
 
   # def test_results_already_rated
   #   ratings = { "Bulbasaur" => '5', "Ivysaur" => '4', "Venusaur" => '3' }

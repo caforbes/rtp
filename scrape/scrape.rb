@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require 'open-uri'
 require 'yaml'
 
 def path
-  File.expand_path("../..", __FILE__)
+  File.expand_path('..', __dir__)
 end
 
 scraped_text = File.read('scrape.txt')
@@ -10,8 +12,8 @@ raw_pokedex = scraped_text.split('<a href="/us/pokedex/')[1..151]
 
 pokedex = raw_pokedex.clone
 pokedex.map! do |text|
-  name = text.match(/<h5>(.*)<\/h5>/)[1]
-  number = text.match(/pokedex\/detail\/(.*).png">/)[1]
+  name = text.match(%r{<h5>(.*)</h5>})[1]
+  number = text.match(%r{pokedex/detail/(.*).png">})[1]
   {
     name: name,
     # orig_url: text.match(/<img src="(.*)">/)[1],

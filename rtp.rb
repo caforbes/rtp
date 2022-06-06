@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sinatra'
 require 'sinatra/reloader'
 require 'tilt/erubis'
@@ -79,7 +81,6 @@ end
 
 # Display interesting stored ratings from database
 get '/results' do
-  
   top_ids = @ratings.top_rated_pokemon_ids
 
   @client_top_pokemon = @db.load_all_pokemon

@@ -1,9 +1,11 @@
-ENV["RACK_ENV"] = "test"
+# frozen_string_literal: true
 
-require "minitest/autorun"
-require "rack/test"
+ENV['RACK_ENV'] = 'test'
 
-require_relative "../rtp"
+require 'minitest/autorun'
+require 'rack/test'
+
+require_relative '../rtp'
 
 class RTPTest < Minitest::Test
   include Rack::Test::Methods
@@ -13,11 +15,11 @@ class RTPTest < Minitest::Test
   end
 
   def test_index
-    get "/"
+    get '/'
 
     assert_equal 200, last_response.status
-    assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
-    assert_includes last_response.body, "<h1>Rate That Pokemon!"
+    assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
+    assert_includes last_response.body, '<h1>Rate That Pokemon!'
     assert_includes last_response.body, "href='/rate'"
   end
 
@@ -25,7 +27,7 @@ class RTPTest < Minitest::Test
     get '/rate'
 
     assert_equal 200, last_response.status
-    assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
+    assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
     assert_includes last_response.body, '<input type="submit"'
   end
 

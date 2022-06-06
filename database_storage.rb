@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 require 'pg'
 
+# for handling connection to db and submission of ratings
 class DatabaseStorage
   def initialize(logger)
     @db = if Sinatra::Base.production?
@@ -15,25 +18,26 @@ class DatabaseStorage
   end
 
   def load_all_pokemon
-    sql = "SELECT * FROM pokemon ORDER BY id ;"
+    sql = 'SELECT * FROM pokemon ORDER BY id ;'
     result = query(sql)
-    result.map{ |row| parse_pokemon_to_hash(row) }
+    result.map { |row| parse_pokemon_to_hash(row) }
   end
 
   def load_one_pokemon(id)
-    sql = "SELECT * FROM pokemon WHERE id=$1 ;"
+    sql = 'SELECT * FROM pokemon WHERE id=$1 ;'
     result = query(sql, id)
 
     parse_pokemon_to_hash(result.first)
   end
 
   def add_client_rating(id, rating)
-    sql = "INSERT INTO ratings (pokemon_id, rating) VALUES ($1, $2);"
-    result = query(sql, id, rating)
+    sql = 'INSERT INTO ratings (pokemon_id, rating) VALUES ($1, $2);'
+    query(sql, id, rating)
     # probe the result object to return a boolean based on success?
   end
 
   def load_all_ratings
+    # FIXME: write method
     # -- display all pokemon ids, names, img, alongside their no. of ratings of each value
     # -- id  | name     | imgname       | ratings_count | avg_rating | cum_rating | ...
     # -- 015 | Beedrill | 015-Bee...png |             2 |        1.5 |          4 | ...
@@ -51,8 +55,8 @@ class DatabaseStorage
   end
 
   def parse_pokemon_to_hash(row)
-    { number: row["id"],
-      name: row["name"],
-      img: row["imgname"] }
+    { number: row['id'],
+      name: row['name'],
+      img: row['imgname'] }
   end
 end

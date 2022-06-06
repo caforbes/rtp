@@ -1,13 +1,16 @@
+# frozen_string_literal: true
+
+# handles interaction with session object and ratings
 class SessionStorage
   include Enumerable
 
   def initialize(session, connection)
     @session = session
-    @session[:ratings] ||= new_empty_ratings(connection.load_all_pokemon())
+    @session[:ratings] ||= new_empty_ratings(connection.load_all_pokemon)
   end
 
-  def each
-    @session[:ratings].each { |id, rating_info| yield(id, rating_info) }
+  def each(&block)
+    @session[:ratings].each(&block)
     @session[:ratings]
   end
 
@@ -21,7 +24,7 @@ class SessionStorage
     @session[:ratings][id][:rating] = rating_value
   end
 
-  alias_method :rate, :[]=
+  alias rate []=
 
   # update the comment text set for the pokemon at the input id
   def comment(id, comment_text)
@@ -30,7 +33,7 @@ class SessionStorage
 
   # check whether all pokemon have a rating value; return boolean
   def full?
-    @session[:ratings].all? { |id, rating_data| rating_data[:rating] }
+    @session[:ratings].all? { |_id, rating_data| rating_data[:rating] }
   end
 
   # return the id of the first pokemon with no rating value; else return nil
@@ -53,7 +56,7 @@ class SessionStorage
 
   def top_rated_pokemon_ids
     max = max_rating
-    @session[:ratings].select do |id, info|
+    @session[:ratings].select do |_id, info|
       info[:rating] == max
     end.keys
   end
@@ -63,7 +66,7 @@ class SessionStorage
   # create a new hash with pokemon id as key, hash of user rating data as value
   def new_empty_ratings(pokemon_list)
     pokemon_list.map do |pokemon|
-      [pokemon[:number], {rating: nil, comment: nil}]
+      [pokemon[:number], { rating: nil, comment: nil }]
     end.to_h
   end
 end

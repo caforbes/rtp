@@ -1,8 +1,8 @@
-<% if session[:submitted] %>
+<% if @client.submitted? %>
   <p>Phew! You did it! Why don't you sit back with a tall glass of water?</p>
 <% end %>
 
-<!--everyone sees-->
+<%# everyone sees: %>
 <h1>Overall ratings</h1>
 
 <p>The BEST pokemon are:</p>
@@ -10,29 +10,25 @@
 <p>FORTHCOMING. One day this page may have graphs...</p>
 
 
-<!--if you rated some pokemon-->
-<% if session[:ratings] %>
+<%# if you rated some pokemon: %>
+<% if @client.submitted? %>
   <h1>Your ratings</h1>
 
-  <% if @client_top_pokemon.length > 5 %>
-    <p>Five of your highest-rated pokemon are:</p>
-    <% top_pokemon = @client_top_pokemon.sample(5) %>
-  <% else %>
-    <p>Your highest-rated pokemon are:</p>
-    <% top_pokemon = @client_top_pokemon %>
-  <% end %>
-
-  <form action='/submit' method='post'>
+  <p>Your highest-rated pokemon are:</p>
   <div>
-    <% @client_top_pokemon.each do |pokemon| %>
+    <% @client_top_pokemon.sample(3).each do |pokemon| %>
       <img src="<%= poke_image(pokemon[:img]) %>">
+      <%# TODO: add pokemon's name %>
     <% end %>
   </div>
 
-  <p>The pokemon to which you gave the most atypical ratings were: ...</p>
+  <p>Someday I'll add more interesting statistics!</p>
 
   <p>Thanks for rating! Feel free to come rate again after leveling up a bit.</p>
+<% else %>
+  <p><a href="/">Submit your Pokemon ratings here!</a></p>
 <% end %>
 
+<%# FIXME: remove insta-deletion of session data %>
 <% session.delete(:ratings) %>
 <% session.delete(:submitted) %>

@@ -31,9 +31,9 @@ class SurveyTest < Minitest::Test
     end
   end
 
-  def test_ratings_export
+  def test_results
     @survey['001'] = 1
-    assert_includes @survey.ratings, ['001', 1]
+    assert_includes @survey.results, ['001', 1]
   end
 
   # def test_comment

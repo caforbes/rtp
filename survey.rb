@@ -13,10 +13,10 @@ class Survey
     @pokemon_questions.map { |id, info| [id, info[:rating]] }
   end
 
-  # TODO: test me
+  # provides parameters pokemon_id and responses_hash
   def each(&block)
     @pokemon_questions.each(&block)
-    @pokemon_questions
+    self
   end
 
   def [](id)
@@ -50,20 +50,17 @@ class Survey
     unrated.size
   end
 
-  # TODO: write tests
   def top_rated_pokemon_ids
     max = top_rating_given
+    return unless max
+
     @pokemon_questions.select do |_id, info|
       info[:rating] == max
     end.keys
   end
 
-  private
-
-  # TODO: write tests
-  # returns the highest rating value for any pokemon in the session, or nil
   def top_rating_given
-    # highest/"best" value is 1
-    @pokemon_questions.values.filter_map.min
+    # note: "top" rating is 1
+    results.map { |_id, rating| rating }.compact.min
   end
 end

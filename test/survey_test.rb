@@ -82,13 +82,70 @@ class SurveyTest < Minitest::Test
     assert_equal @survey.remaining_size, 0
   end
 
-  private
-
-  def rate_one
-    @survey['001'] = 1
+  def test_each
+    iteration_count = 0
+    @survey.each do |id, values|
+      if iteration_count == 0
+        assert_instance_of String, id
+        assert_instance_of Hash, values
+      end
+      iteration_count += 1
+    end
+    assert_equal iteration_count, @pokemon_ids.size
   end
 
-  def rate_all
-    @pokemon_ids.each { |id| @survey[id] = 1 }
+  def test_each_rating
+    iteration_count = 0
+    rate_all
+    @survey.each do |id, values|
+      assert_includes values.keys, :rating
+      iteration_count += 1
+    end
+    assert_equal iteration_count, @pokemon_ids.size
+  end
+
+  def test_top_rating_none
+    assert_nil @survey.top_rating_given
+  end
+
+  def test_top_rating_none
+    assert_nil @survey.top_rating_given
+  end
+
+  def test_top_rating_one
+    rate_one(2)
+    assert_equal @survey.top_rating_given, 2
+  end
+
+  def test_top_rating_is_1
+    rate_all(2)
+    @survey['002'] = 1
+    assert_equal @survey.top_rating_given, 1
+  end
+
+  def test_top_rated_ids_none
+    assert_nil @survey.top_rated_pokemon_ids
+  end
+
+  def test_top_rated_ids_one
+    rate_one
+    assert_equal @survey.top_rated_pokemon_ids, [@pokemon_ids[0]]
+  end
+
+  def test_top_rated_ids_multiple
+    rate_all(2)
+    assert_equal @survey.top_rated_pokemon_ids, @pokemon_ids
+    rate_one(1)
+    assert_equal @survey.top_rated_pokemon_ids, [@pokemon_ids[0]]
+  end
+
+  private
+
+  def rate_one(rating = 1)
+    @survey['001'] = rating
+  end
+
+  def rate_all(rating = 1)
+    @pokemon_ids.each { |id| @survey[id] = rating }
   end
 end

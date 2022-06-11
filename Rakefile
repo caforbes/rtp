@@ -30,7 +30,7 @@ desc 'Drop db if it exists, by checking all available dbs'
 task :dropdb do
   connection = PG.connect(dbname: 'template1')
   query = 'SELECT datname FROM pg_database WHERE datistemplate = false;'
-  
+
   connection.exec(query) do |result|
     matching_db = result.select { |row| row.values_at('datname') == DB_NAME }
     sh "dropdb #{DB_NAME}" if matching_db

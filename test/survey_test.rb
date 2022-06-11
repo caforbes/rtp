@@ -8,18 +8,20 @@ require_relative '../survey'
 HERE = File.expand_path(__dir__)
 SAMPLE_POKEMON = YAML.load_file(File.join(HERE, 'pokedex.yml'))
 
-class SurveyTest < Minitest::Test
+class SurveyTest < Minitest::Test # rubocop:disable Metrics/ClassLength
   def setup
     @survey = Survey.new(SAMPLE_POKEMON)
     @pokemon_ids = SAMPLE_POKEMON.map { |pokemon| pokemon[:number] }
   end
 
-  def test_rate_as_int
-    @survey['001'] = 1
+  def test_rate_accessor
+    rate_one(1)
     assert_equal @survey['001'], 1
+  end
 
-    @survey['002'] = '1'
-    assert_equal @survey['002'], 1
+  def test_rate_as_int
+    rate_one('1')
+    assert_equal @survey['001'], 1
   end
 
   def test_rate_error
@@ -85,7 +87,7 @@ class SurveyTest < Minitest::Test
   def test_each
     iteration_count = 0
     @survey.each do |id, values|
-      if iteration_count == 0
+      if iteration_count.zero?
         assert_instance_of String, id
         assert_instance_of Hash, values
       end
@@ -97,15 +99,11 @@ class SurveyTest < Minitest::Test
   def test_each_rating
     iteration_count = 0
     rate_all
-    @survey.each do |id, values|
+    @survey.each do |_, values|
       assert_includes values.keys, :rating
       iteration_count += 1
     end
     assert_equal iteration_count, @pokemon_ids.size
-  end
-
-  def test_top_rating_none
-    assert_nil @survey.top_rating_given
   end
 
   def test_top_rating_none
@@ -117,9 +115,10 @@ class SurveyTest < Minitest::Test
     assert_equal @survey.top_rating_given, 2
   end
 
-  def test_top_rating_is_1
+  def test_top_rating_is_lowest
     rate_all(2)
-    @survey['002'] = 1
+    assert_equal @survey.top_rating_given, 2
+    rate_one(1)
     assert_equal @survey.top_rating_given, 1
   end
 

@@ -60,7 +60,7 @@ class Survey
   end
 
   def top_rating_given
-    # note: "top" rating is 1
+    # "best" rating is 1, worst is 5
     results.map { |_id, rating| rating }.compact.min
   end
 end

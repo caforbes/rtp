@@ -11,11 +11,13 @@ gem 'sinatra-contrib'
 
 group :development do
   gem 'minitest'
+  gem 'minitest-reporters'
   gem 'rack-test'
   gem 'rake'
   gem 'rubocop'
   gem 'rubocop-minitest'
   gem 'rubocop-rake'
+  gem 'simplecov', require: false
 end
 
 group :production do

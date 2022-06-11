@@ -2,7 +2,7 @@
 
 ENV['RACK_ENV'] = 'test'
 
-require 'minitest/autorun'
+require 'test_helper'
 require 'rack/test'
 
 require_relative '../rtp'

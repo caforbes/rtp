@@ -38,8 +38,7 @@ end
 
 before do
   @db = DatabaseStorage.new(logger)
-  @client = SessionStorage.new(session, @db.load_all_pokemon)
-  # FIXME: don't call db to load pokedex on every page
+  @client = SessionStorage.new(session) { @db.load_all_pokemon }
 end
 
 after do
@@ -67,12 +66,9 @@ post '/rate/:pokemon_id' do
 
   redirect '/rate' unless @client.survey.complete?
 
-  @client.survey.each do |id, values|
-    @db.add_client_rating(id, values[:rating])
-  end
-  # TODO: change to @db.add_survey(@client.survey.results)
-
+  @db.submit_user_data(@client.survey.results)
   @client.mark_submitted
+
   redirect '/results'
 end
 

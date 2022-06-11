@@ -6,10 +6,10 @@ require_relative 'survey'
 class SessionStorage
   attr_reader :survey
 
-  def initialize(session, pokedex)
+  def initialize(session, &load_pokedex)
     @session = session
 
-    @session[:survey] ||= Survey.new(pokedex)
+    @session[:survey] ||= Survey.new(load_pokedex.call)
     @survey = @session[:survey]
   end
 

@@ -20,20 +20,18 @@ class DatabaseStorage
   def load_all_pokemon
     sql = 'SELECT * FROM pokemon ORDER BY id ;'
     result = query(sql)
-    result.map { |row| parse_pokemon_to_hash(row) }
+    result.map { |row| pokemon_to_h(row) }
   end
 
   def load_one_pokemon(id)
     sql = 'SELECT * FROM pokemon WHERE id=$1 ;'
     result = query(sql, id)
 
-    parse_pokemon_to_hash(result.first)
+    pokemon_to_h(result.first)
   end
 
-  def add_client_rating(id, rating)
-    sql = 'INSERT INTO ratings (pokemon_id, rating) VALUES ($1, $2);'
-    query(sql, id, rating)
-    # probe the result object to return a boolean based on success?
+  def submit_user_data(ratings)
+    ratings.each { |id, rating| insert_one_rating(id, rating) }
   end
 
   def load_all_ratings
@@ -49,12 +47,17 @@ class DatabaseStorage
 
   private
 
+  def insert_one_rating(id, rating)
+    sql = 'INSERT INTO ratings (pokemon_id, rating) VALUES ($1, $2);'
+    query(sql, id, rating)
+  end
+
   def query(sql, *args)
     @logger.info "#{sql}: #{args}"
     @db.exec_params(sql, args)
   end
 
-  def parse_pokemon_to_hash(row)
+  def pokemon_to_h(row)
     { number: row['id'],
       name: row['name'],
       img: row['imgname'] }

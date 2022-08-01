@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'sinatra'
-require 'sinatra/reloader'
 require 'tilt/erubis'
 require 'yaml'
 
@@ -14,6 +13,7 @@ configure do
 end
 
 configure :development do
+  require 'sinatra/reloader'
   also_reload 'database_storage.rb'
   also_reload 'session_storage.rb'
   also_reload 'survey.rb'

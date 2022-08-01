@@ -19,16 +19,6 @@ configure :development do
   also_reload 'survey.rb'
 end
 
-# def pokedex_path
-#   if ENV["RACK_ENV"] == "test"
-#     File.expand_path("../test", __FILE__)
-#   elsif settings.development?
-#     File.expand_path("../dev", __FILE__)
-#   else
-#     File.expand_path("..", __FILE__)
-#   end
-# end
-
 # TODO: dynamically generate image link from id/name, don't store in db
 helpers do
   def poke_image(img_link)

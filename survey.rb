@@ -29,10 +29,7 @@ class Survey
     @pokemon_questions.fetch(id)[:rating] = rating_value.to_i
   end
 
-  # def comment(id, comment_text)
-  #   # TODO: write tests, incorporate into functionality
-  #   @pokemon_questions.fetch(id)[:comment] = comment_text
-  # end
+  # TODO: add comment functionality; text area in survey with user comment
 
   def next_unrated_id
     unrated.first

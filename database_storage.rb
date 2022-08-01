@@ -2,15 +2,15 @@
 
 require 'pg'
 
+DB_NAME = 'rtp'
+
 # for handling connection to db and submission of ratings
 class DatabaseStorage
   def initialize(logger)
-    @db = if Sinatra::Base.production?
-            PG.connect(ENV['DATABASE_URL'])
-          else
-            PG.connect(dbname: 'rtp')
-          end
+    @is_test = (ENV['RACK_ENV'] == 'test')
+    @db = PG.connect(dbname: dbname)
     @logger = logger
+    setup_schema
   end
 
   def disconnect
@@ -47,6 +47,16 @@ class DatabaseStorage
 
   private
 
+  def dbname
+    if Sinatra::Base.production?
+      ENV['DATABASE_URL']
+    elsif @is_test # TODO: setup test db
+      "#{DB_NAME}_test"
+    else
+      DB_NAME
+    end
+  end
+
   def insert_one_rating(id, rating)
     sql = 'INSERT INTO ratings (pokemon_id, rating) VALUES ($1, $2);'
     query(sql, id, rating)
@@ -61,5 +71,36 @@ class DatabaseStorage
     { number: row['id'],
       name: row['name'],
       img: row['imgname'] }
+  end
+
+  def setup_schema
+    return if schema_exists?
+
+    schema = File.join(File.expand_path(__dir__), 'schema.sql')
+    @db.exec IO.read(schema)
+    seed_db
+  end
+
+  def schema_exists?
+    sql = <<~SQL
+      SELECT COUNT(*) FROM information_schema.tables
+      WHERE table_schema = 'public' AND table_name = 'pokemon';
+    SQL
+
+    result = query(sql)
+    result[0]['count'] == '1'
+  end
+
+  def seed_db
+    pokedex_path = if @is_test
+                     File.join(File.expand_path(__dir__), 'test', 'pokedex.yml')
+                   else
+                     File.join(File.expand_path(__dir__), 'pokedex.yml')
+                   end
+    pokedex = YAML.load_file(pokedex_path)
+    pokedex.map! { |pokemon| [pokemon[:number], pokemon[:name], pokemon[:img]] }
+
+    sql = 'INSERT INTO pokemon (id, name, imgname) VALUES ($1, $2, $3);'
+    pokedex.each { |pokemon| query(sql, *pokemon) }
   end
 end

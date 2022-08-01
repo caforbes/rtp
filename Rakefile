@@ -32,41 +32,6 @@ end
 
 RuboCop::RakeTask.new
 
-desc 'Setup fresh db with all pokemon'
-task setupdb: :makedb do
-  main = File.expand_path(__dir__)
-  sh "psql -d #{DB_NAME} < #{File.join(main, 'schema.sql')}"
-
-  pokedex = YAML.load_file(File.join(main, 'pokedex.yml'))
-  pokedex.map! { |pokemon| [pokemon[:number], pokemon[:name], pokemon[:img]] }
-
-  db = PG.connect(dbname: DB_NAME)
-  sql = 'INSERT INTO pokemon (id, name, imgname) VALUES ($1, $2, $3);'
-  pokedex.each do |pokemon|
-    db.exec_params(sql, pokemon)
-  end
-  db.close
-  puts "#{pokedex.size} pokemon written to db."
-end
-
-desc 'Setup fresh db with 6 random pokemon'
-task setupdb_dev: :makedb do
-  main = File.expand_path(__dir__)
-  sh "psql -d #{DB_NAME} < #{File.join(main, 'schema.sql')}"
-
-  pokedex = YAML.load_file(File.join(main, 'pokedex.yml'))
-  pokedex.map! { |pokemon| [pokemon[:number], pokemon[:name], pokemon[:img]] }
-  pokedex = pokedex.sample(6)
-
-  db = PG.connect(dbname: DB_NAME)
-  sql = 'INSERT INTO pokemon (id, name, imgname) VALUES ($1, $2, $3);'
-  pokedex.each do |pokemon|
-    db.exec_params(sql, pokemon)
-  end
-  db.close
-  puts "#{pokedex.size} random pokemon written to db."
-end
-
 desc 'Make empty dev db'
 task makedb: :dropdb do
   sh "createdb #{DB_NAME}"
@@ -85,4 +50,22 @@ end
 desc 'Drop testdb if it exists'
 task :dropdb_test do
   sh "dropdb #{TEST_DB_NAME}" if db_exist?(TEST_DB_NAME)
+end
+
+desc 'Setup fresh db with 6 random pokemon'
+task setupdb_dev: :makedb do
+  main = File.expand_path(__dir__)
+  sh "psql -d #{DB_NAME} < #{File.join(main, 'schema.sql')}"
+
+  pokedex = YAML.load_file(File.join(main, 'pokedex.yml'))
+  pokedex.map! { |pokemon| [pokemon[:number], pokemon[:name], pokemon[:img]] }
+  pokedex = pokedex.sample(6)
+
+  db = PG.connect(dbname: DB_NAME)
+  sql = 'INSERT INTO pokemon (id, name, imgname) VALUES ($1, $2, $3);'
+  pokedex.each do |pokemon|
+    db.exec_params(sql, pokemon)
+  end
+  db.close
+  puts "#{pokedex.size} random pokemon written to db."
 end

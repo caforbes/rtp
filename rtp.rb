@@ -50,7 +50,7 @@ get '/' do
   erb :index
 end
 
-# Display form for rating the first unrated pokemon, based on ratings stored in session
+# Render form to rate the first unrated pokemon, based on saved session
 get '/rate' do
   redirect '/results' if @client.survey.complete?
 
@@ -59,8 +59,7 @@ get '/rate' do
   erb :rate
 end
 
-# Submit a rating value for one pokemon and store in session
-# If it's the last pokemon, submit all ratings to db
+# Submit a rating for one pokemon, store in session, submit survey if complete
 post '/rate/:pokemon_id' do
   @client.survey[params[:pokemon_id]] = params[:rating].to_i
 
@@ -68,6 +67,7 @@ post '/rate/:pokemon_id' do
 
   @db.submit_user_data(@client.survey.results)
   @client.mark_submitted
+  session[:message] = 'Thanks, trainer! Your ratings have been submitted!'
 
   redirect '/results'
 end
@@ -80,6 +80,5 @@ get '/results' do
   end
 
   # calculate aggregate best pokemon from db
-
   erb :results
 end

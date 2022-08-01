@@ -14,6 +14,10 @@ class RTPTest < Minitest::Test
     Sinatra::Application
   end
 
+  def survey
+    last_request.session[:survey]
+  end
+
   def test_index
     get '/'
 
@@ -36,35 +40,39 @@ class RTPTest < Minitest::Test
     assert_equal 200, last_response.status
   end
 
-  # def test_rate_success
-  #   ratings = { "Bulbasaur" => '5', "Ivysaur" => '4', "Venusaur" => '3' }
+  def test_rate_success
+    pokemon_id = '001'
+    value = '1'
 
-  #   post '/rate', ratings
-  #   assert_equal 302, last_response.status
+    post "/rate/#{pokemon_id}", { 'rating' => value }
+    assert_equal 302, last_response.status
 
-  #   ratings_num = ratings.map { |name, val| [name, val.to_i] }.to_h
-  #   assert_equal last_request.session[:rating], ratings_num
-  # end
+    assert_equal survey[pokemon_id], value.to_i
+  end
 
-  # def test_rate_incomplete
-  #   ratings = { "Bulbasaur" => '5' }
+  def test_rate_unrateable
+    skip 'to be written'
+    # TODO: should gracefully handle post request to a non-pokemon
+  end
 
-  #   post '/rate', ratings
-  #   assert_equal 422, last_response.status
-  #   assert_includes last_response.body, "No skipping!"
-  # end
+  def test_rate_and_submit
+    skip 'to be written'
+    # TODO: on final rating, should submit all ratings to db and redirect to results page
 
-  # def test_index_already_rated
-  #   ratings = { "Bulbasaur" => '5', "Ivysaur" => '4', "Venusaur" => '3' }
-  #   post '/rate', ratings
+    # get "/", {}, {"rack.session" => { username: "admin"} }
 
-  #   get '/'
+    # ratings = { "Bulbasaur" => '5', "Ivysaur" => '4', "Venusaur" => '3' }
+    # post '/rate', ratings
 
-  #   assert_equal 200, last_response.status
-  #   refute_includes last_response.body, "href='/rate'"
-  # end
+    assert_includes last_request.session[:message], 'Your ratings have been submitted!'
+  end
 
-  def test_results_new
+  def test_flash_message
+    skip 'to be implemented'
+    # TODO: flash message (e.g. after submission) should display on page
+  end
+
+  def test_results
     get '/results'
 
     assert_equal 200, last_response.status
@@ -72,15 +80,16 @@ class RTPTest < Minitest::Test
     assert_includes last_response.body, 'The BEST pokemon are'
   end
 
-  # def test_results_already_rated
-  #   ratings = { "Bulbasaur" => '5', "Ivysaur" => '4', "Venusaur" => '3' }
-  #   post '/rate', ratings
+  def test_results_after_submission
+    skip 'to be written'
+    # TODO: results should have custom info based on user submitted survey
+    #   ratings = { "Bulbasaur" => '5', "Ivysaur" => '4', "Venusaur" => '3' }
+    #   post '/rate', ratings
 
-  #   get '/results'
+    #   get '/results'
 
-  #   assert_equal 200, last_response.status
-  #   assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
-  #   assert_includes last_response.body, "Your top-rated pokemon are"
-  #   assert_includes last_response.body, "The BEST pokemon are"
-  # end
+    #   assert_equal 200, last_response.status
+    #   assert_equal "text/html;charset=utf-8", last_response["Content-Type"]
+    #   assert_includes last_response.body, "Your top-rated pokemon are"
+  end
 end

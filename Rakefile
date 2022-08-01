@@ -21,11 +21,12 @@ ensure
 end
 
 # Define tasks
-desc 'Run the main task (testdb management, tests, lint)'
-task default: %i[makedb_test test dropdb_test rubocop]
+desc 'Run the main task (tests, testdb teardown, lint)'
+task default: %i[test dropdb_test rubocop]
 
-desc 'Run tests'
+desc 'Run tests with test db'
 Rake::TestTask.new do |t|
+  t.deps << :makedb_test
   t.libs << 'test'
   t.test_files = FileList['test/*_test.rb']
 end

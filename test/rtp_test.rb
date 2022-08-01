@@ -14,6 +14,8 @@ class RTPTest < Minitest::Test
     Sinatra::Application
   end
 
+  # TODO: add setup/teardown steps that manipulate rows in testdb (e.g. ratings)
+
   def survey
     last_request.session[:survey]
   end

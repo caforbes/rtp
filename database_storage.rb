@@ -50,7 +50,7 @@ class DatabaseStorage
   def dbname
     if Sinatra::Base.production?
       ENV['DATABASE_URL']
-    elsif @is_test # TODO: setup test db
+    elsif @is_test
       "#{DB_NAME}_test"
     else
       DB_NAME

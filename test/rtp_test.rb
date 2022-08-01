@@ -64,6 +64,7 @@ class RTPTest < Minitest::Test
     # ratings = { "Bulbasaur" => '5', "Ivysaur" => '4', "Venusaur" => '3' }
     # post '/rate', ratings
 
+    assert_equal last_request.session[:submitted], 'true'
     assert_includes last_request.session[:message], 'Your ratings have been submitted!'
   end
 
